@@ -5,7 +5,6 @@ int gpio[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-  Serial.begin(115200);// initialize digital pin LED_BUILTIN as an output.
   pinMode(DATA, OUTPUT);
   pinMode(SRCLK, OUTPUT);
 }
@@ -67,24 +66,20 @@ void resetPin(int pinNumber){
 
 void extendGPIO(int gpio[]) {
   int data;
-  for(int i=0; i<9; i++){
-    data = gpio[7-i];
-    Serial.println(data);
-    if(data == 0){
+  for(int i=7; i>=0; i--){
+    if(gpio[i] == 0){
       digitalWrite(DATA, HIGH);
-      //since all the timing requirements are in the range of nanoseconds.
-      delayMicroseconds(1);
       digitalWrite(SRCLK, LOW);
       digitalWrite(SRCLK, HIGH);
     }
     else {
       digitalWrite(DATA, LOW);
-      //since all the timing requirements are in the range of nanoseconds.
-      delayMicroseconds(1);
       digitalWrite(SRCLK, LOW);
       digitalWrite(SRCLK, HIGH);
     }
   }
-  Serial.println("Bwahahahaha");
+  //extra cycle for latching the last bit, since SRCLK and RCLK are interconnected
+  digitalWrite(SRCLK, LOW);
+  digitalWrite(SRCLK, HIGH);
 }
 
